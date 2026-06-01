@@ -27,6 +27,10 @@ def delete(groupe_id: int, db: Session = Depends(get_db), current_user=Depends(g
 def add_membre(groupe_id: int, data: schemas.MembreGroupeCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     return ctrl.add_membre(db, groupe_id, data)
 
+@router.delete("/{groupe_id}/membres/{utilisateur_id}", status_code=204)
+def remove_membre(groupe_id: int, utilisateur_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    ctrl.remove_membre(db, groupe_id, utilisateur_id)
+
 @router.get("/{groupe_id}/membres", response_model=list[schemas.MembreGroupeRead])
 def get_membres(groupe_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     return ctrl.get_membres(db, groupe_id)

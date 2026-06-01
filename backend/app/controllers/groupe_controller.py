@@ -28,7 +28,21 @@ def get_by_id(db: Session, groupe_id: int):
 
 def delete(db: Session, groupe_id: int):
     groupe = get_by_id(db, groupe_id)
+    db.query(MembreGroupe).filter(MembreGroupe.groupe_id == groupe_id).delete()
     db.delete(groupe)
+    db.commit()
+
+
+def remove_membre(db: Session, groupe_id: int, utilisateur_id: int):
+    membre = db.query(MembreGroupe).filter(
+        MembreGroupe.groupe_id == groupe_id,
+        MembreGroupe.utilisateur_id == utilisateur_id
+    ).first()
+    if not membre:
+        raise HTTPException(status_code=404, detail="Membre introuvable")
+    if membre.role == "proprietaire":
+        raise HTTPException(status_code=400, detail="Impossible de retirer le propriétaire")
+    db.delete(membre)
     db.commit()
 
 
